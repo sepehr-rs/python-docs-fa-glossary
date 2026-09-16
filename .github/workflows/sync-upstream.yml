@@ -1,0 +1,73 @@
+name: Sync upstream docs & glossary
+
+# Runs daily, pulls the latest translations from python/python-docs-fa,
+# regenerates data/corpus.json and data/glossary.json, and opens a PR
+# if anything changed. A PR (rather than a direct push) gives a chance
+# to sanity-check before it goes live.
+
+on:
+  schedule:
+    - cron: "17 3 * * *"   # daily at 03:17 UTC
+  workflow_dispatch: {}      # allow manual trigger from the Actions tab
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out this repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check out upstream python-docs-fa
+        uses: actions/checkout@v4
+        with:
+          repository: python/python-docs-fa
+          path: upstream/python-docs-fa
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install polib
+
+      - name: Build corpus + glossary data
+        run: |
+          python scripts/build_corpus.py \
+            --repo-dir upstream/python-docs-fa \
+            --glossary-tsv glossary/glossary.tsv \
+            --out-dir data
+
+      - name: Check for changes
+        id: diff
+        run: |
+          if git diff --quiet -- data/; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open pull request
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore: sync corpus & glossary from python-docs-fa"
+          title: "Sync corpus & glossary data from upstream"
+          body: |
+            Automated sync from `python/python-docs-fa`.
+
+            This updates `data/corpus.json` and `data/glossary.json` from the
+            latest `.po` files upstream. Merging this PR will trigger the
+            site rebuild workflow.
+          branch: automated/sync-upstream
+          delete-branch: true
+          labels: |
+            automated
+            data-sync
