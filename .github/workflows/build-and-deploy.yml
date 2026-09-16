@@ -1,7 +1,8 @@
 name: Build & deploy site
 
-# Rebuilds the static site from site/{index.html,style.css,app.js,assets/}
-# + data/*.json whenever either changes on main, and deploys to GitHub Pages.
+# Rebuilds corpus.json/glossary.json from glossary.tsv + the python-docs-fa
+# .po files, then rebuilds the static site from site/{index.html,style.css,app.js,assets/}
+# + data/*.json, and deploys to GitHub Pages.
 
 on:
   push:
@@ -29,10 +30,26 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v4
 
+      - name: Check out python-docs-fa
+        uses: actions/checkout@v4
+        with:
+          repository: python/python-docs-fa
+          path: python-docs-fa
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: pip install polib
+
+      - name: Build corpus & glossary data
+        run: |
+          python scripts/build_corpus.py \
+            --repo-dir python-docs-fa \
+            --glossary-tsv glossary/glossary.tsv \
+            --out-dir data
 
       - name: Build site
         run: |
