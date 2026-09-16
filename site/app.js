@@ -196,13 +196,13 @@
 
     if (match){
       html += `<div class="glossary-card">
-        <div class="glossary-card-label">یافته شد در واژه‌نامه رسمی · FOUND IN OFFICIAL GLOSSARY</div>
+        <div class="glossary-card-label">واژه‌های مشابه درخواست شما که در واژه‌نامه یافت شدند:</div>
         <div class="glossary-card-term">
           <span class="glossary-en">${escapeHtml(match.entry.en)}</span>
           <span class="glossary-arrow">→</span>
           <span class="glossary-fa">${escapeHtml(match.entry.fa)}</span>
         </div>
-        ${match.score < 1 ? `<div class="glossary-match-score">مطابقت تقریبی (${Math.round(match.score*100)}٪) · approximate match</div>` : ''}
+        ${match.score < 1 ? `<div class="glossary-match-score">مطابقت تقریبی (${Math.round(match.score*100)}٪)</div>` : ''}
       </div>`;
     } else {
       html += `<div class="no-glossary-note">
