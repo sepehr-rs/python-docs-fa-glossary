@@ -104,16 +104,11 @@
     return escaped.slice(0, idx) + '<mark>' + escaped.slice(idx, idx+term.length) + '</mark>' + escaped.slice(idx+term.length);
   }
 
-  function githubIssueUrl(kind, term){
-    const base = REPO_URL + "/issues/new";
+  function githubContributingDocumentLink(kind, term){
     if (kind === 'report'){
-      const title = encodeURIComponent(`Translation issue: "${term}"`);
-      const body = encodeURIComponent(`**Term:** ${term}\n\n**What's wrong with the current translation(s)?**\n\n\n**Suggested translation (if any):**\n`);
-      return `${base}?title=${title}&body=${body}&labels=translation`;
+      return "https://github.com/python/python-docs-fa/blob/3.14/CONTRIBUTING.md#%DA%AF%D8%B2%D8%A7%D8%B1%D8%B4-%D8%A7%D8%B4%DA%A9%D8%A7%D9%84-%D8%AF%D8%B1-%D8%AA%D8%B1%D8%AC%D9%85%D9%87";
     } else {
-      const title = encodeURIComponent(`New glossary entry: "${term}"`);
-      const body = encodeURIComponent(`**English term:** ${term}\n\n**Suggested Persian translation:**\n\n\n**Context / where this term appears:**\n`);
-      return `${base}?title=${title}&body=${body}&labels=glossary`;
+      return "https://github.com/python/python-docs-fa/blob/3.14/CONTRIBUTING.md#%D9%BE%DB%8C%D8%B4%D9%86%D9%87%D8%A7%D8%AF-%D8%AA%D8%BA%DB%8C%DB%8C%D8%B1-%D8%AF%D8%B1-%D9%88%D8%A7%DA%98%D9%87-%DB%8C%D8%A7-%D8%B4%DB%8C%D9%88%D9%87%E2%80%8C%DB%8C-%D9%86%DA%AF%D8%A7%D8%B1%D8%B4";
     }
   }
 
@@ -209,18 +204,18 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/></svg>
         <span>این واژه در واژه‌نامه رسمی یافت نشد. نتایج زیر از پیکره‌ی ترجمه‌ی مستندات هستند.
         اگر فکر می‌کنید این واژه باید به واژه‌نامه اضافه شود،
-        <a href="${githubIssueUrl('suggest', term)}" target="_blank" rel="noopener">یک واژه‌ی جدید پیشنهاد دهید</a>.</span>
+        <a href="${githubContributingDocumentLink('suggest', term)}" target="_blank" rel="noopener">یک واژه‌ی جدید پیشنهاد دهید</a>.</span>
       </div>`;
     }
 
     html += `<div id="result-list-container"></div>`;
 
     html += `<div class="prompt-row">
-      <a class="prompt-btn" href="${githubIssueUrl('report', term)}" target="_blank" rel="noopener">
+      <a class="prompt-btn" href="${githubContributingDocumentLink('report', term)}" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/></svg>
         گزارش خطای ترجمه یا پیشنهاد ترجمه‌ی بهتر
       </a>
-      ${!match ? `<a class="prompt-btn suggest-new" href="${githubIssueUrl('suggest', term)}" target="_blank" rel="noopener">
+      ${!match ? `<a class="prompt-btn suggest-new" href="${githubContributingDocumentLink('suggest', term)}" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
         پیشنهاد افزودن به واژه‌نامه
       </a>` : ''}
